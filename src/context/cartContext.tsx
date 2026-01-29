@@ -19,16 +19,20 @@ interface Product {
   quantity: number | string;
   selectedColor?: string;
   selectedSize?: string | number;
+  cartItemId?: string; // ID unique pour chaque item dans le panier
 }
 
 interface CartContextType {
   cart: Product[];
+  lastAddedItem: Product | null;
   addToCart: (product: Product) => void;
-  updateCartItem: (productId: string, quantity: number) => void;
-  removeCartItem: (productId: string) => void;
+  updateCartItem: (cartItemId: string, quantity: number) => void;
+  removeCartItem: (cartItemId: string) => void;
   calculateTotalPrice: () => number;
   calculateTotalPromoPrice: () => number;
   calculateDiscountRate: () => number;
+  getCartItemsCount: () => number;
+  setNotificationHandler: (callback: (message: string, type?: "success" | "error" | "info" | "warning") => void) => void;
 }
 
 // Créez le contexte avec un type explicite ou undefined
@@ -39,32 +43,94 @@ export const CartContext = createContext<CartContextType | undefined>(
 // Fournisseur du contexte
 export function CartProvider({ children }: Context) {
   const [cart, setCart] = useState<Product[]>([]);
-  
+  const [lastAddedItem, setLastAddedItem] = useState<Product | null>(null);
+  const [notificationCallback, setNotificationCallback] = useState<((message: string, type?: "success" | "error" | "info" | "warning") => void) | null>(null);
+
+  // Fonction pour enregistrer le callback de notification
+  const setNotificationHandler = (callback: (message: string, type?: "success" | "error" | "info" | "warning") => void) => {
+    setNotificationCallback(() => callback);
+  };
+
+  // Fonction pour générer un ID unique pour un item du panier
+  const generateCartItemId = (product: Product): string => {
+    return `${product.id}-${product.selectedColor || 'no-color'}-${product.selectedSize || 'no-size'}`;
+  };
 
   // Fonction pour ajouter un produit au panier
   const addToCart = (product: Product) => {
     setCart((prevCart) => {
-      // Vérifie si le produit est déjà dans le panier
+      const cartItemId = generateCartItemId(product);
+      
+      // Vérifie si le produit est déjà dans le panier avec les mêmes options
+      const existingProductIndex = prevCart.findIndex(
+        (item) => item.cartItemId === cartItemId
+      );
 
-      return [...prevCart, product];
+      if (existingProductIndex !== -1) {
+        // Si le produit existe déjà, augmenter la quantité
+        const updatedCart = [...prevCart];
+        const oldQuantity = Number(updatedCart[existingProductIndex].quantity);
+        const newQuantity = oldQuantity + Number(product.quantity);
+        updatedCart[existingProductIndex] = {
+          ...updatedCart[existingProductIndex],
+          quantity: newQuantity,
+        };
+        // Mettre à jour le dernier élément ajouté
+        setLastAddedItem({ ...updatedCart[existingProductIndex] });
+        // Afficher notification
+        if (notificationCallback) {
+          notificationCallback(
+            `Quantité de "${product.nom}" mise à jour (${newQuantity})`,
+            "success"
+          );
+        }
+        return updatedCart;
+      }
+
+      // Sinon, ajouter le nouveau produit avec son cartItemId unique
+      const newProduct = { ...product, cartItemId };
+      setLastAddedItem(newProduct);
+      // Afficher notification
+      if (notificationCallback) {
+        notificationCallback(
+          `"${product.nom}" a été ajouté au panier`,
+          "success"
+        );
+      }
+      return [...prevCart, newProduct];
     });
   };
 
   // Fonction pour mettre à jour la quantité d'un produit dans le panier
-  const updateCartItem = (productId: string, quantity: number) => {
-    setCart((prevCart) =>
-      prevCart.map((product) =>
-        product.id === productId ? { ...product, quantity } : product
-      )
-    );
+  const updateCartItem = (cartItemId: string, quantity: number) => {
+    setCart((prevCart) => {
+      const product = prevCart.find((p) => p.cartItemId === cartItemId);
+      if (product) {
+        if (notificationCallback) {
+          notificationCallback(
+            `Quantité de "${product.nom}" mise à jour (${quantity})`,
+            "success"
+          );
+        }
+      }
+      return prevCart.map((product) =>
+        product.cartItemId === cartItemId ? { ...product, quantity } : product
+      );
+    });
   };
 
   // Fonction pour supprimer un produit du panier
-  const removeCartItem = (productId: string) => {
-    console.log("Suppression du produit avec l'ID :", productId);
-    setCart((prevCart) =>
-      prevCart.filter((product) => product.id !== productId)
-    );
+  const removeCartItem = (cartItemId: string) => {
+    setCart((prevCart) => {
+      const product = prevCart.find((p) => p.cartItemId === cartItemId);
+      if (product && notificationCallback) {
+        notificationCallback(
+          `"${product.nom}" a été retiré du panier`,
+          "info"
+        );
+      }
+      return prevCart.filter((product) => product.cartItemId !== cartItemId);
+    });
   };
 
   // Fonction pour calculer le prix total des produits du panier
@@ -95,17 +161,25 @@ export function CartProvider({ children }: Context) {
     return (discount / totalNormalPrice) * 100;
   };
 
+  // Fonction pour obtenir le nombre total d'items dans le panier
+  const getCartItemsCount = () => {
+    return cart.reduce((total, item) => total + Number(item.quantity), 0);
+  };
+
   // Ajout des fonctions au contexte
   return (
     <CartContext.Provider
       value={{
         cart,
+        lastAddedItem,
         addToCart,
         updateCartItem,
         removeCartItem,
         calculateTotalPrice,
         calculateTotalPromoPrice,
-        calculateDiscountRate
+        calculateDiscountRate,
+        getCartItemsCount,
+        setNotificationHandler
       }}
     >
       {children}
