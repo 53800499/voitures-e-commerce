@@ -126,7 +126,7 @@ export default function Home() {
       <section className="py-8 md:py-12 lg:py-16 bg-white">
         <Container>
           <StaggerContainer>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
               <StaggerItem>
                 <FeatureCard
                   title={wording.home.features.securePayment.title}
