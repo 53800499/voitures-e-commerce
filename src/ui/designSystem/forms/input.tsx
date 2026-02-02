@@ -105,7 +105,7 @@ export const Input = <T extends FieldValues>({
           type={type}
           placeholder={placeholder}
           className={clsx(
-            "w-full px-3 py-2 font-light border rounded-md transition-all duration-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-1",
+            "w-full px-3 py-2 font-light border text-gray-600 rounded-md transition-all duration-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-1",
             {
               "cursor-not-allowed bg-gray-100": isLoading,
               "border-danger focus:ring-danger focus:border-danger":

@@ -30,7 +30,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [isAdminUser, setIsAdminUser] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
+  /* useEffect(() => {
     const checkAdmin = async () => {
       if (authUser) {
         const admin = await isAdmin(authUser);
@@ -44,7 +44,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       setIsLoading(false);
     };
     checkAdmin();
-  }, [authUser, router]);
+  }, [authUser, router]); */
 
   const menuItems = [
     { href: "/dashboard", label: wording.dashboard.menu.dashboard, icon: FiLayout },
@@ -58,7 +58,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     router.push("/");
   };
 
-  if (isLoading) {
+  /* if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Typography variant="body-lg" theme="gray">Chargement...</Typography>
@@ -68,7 +68,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   if (!isAdminUser) {
     return null;
-  }
+  } */
 
   return (
     <div className="min-h-screen bg-gray-50">

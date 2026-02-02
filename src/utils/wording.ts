@@ -126,6 +126,96 @@ export const wording = {
         },
       ],
     },
+    stats: {
+      title: "Nos chiffres parlent d'eux-mêmes",
+      subtitle: "Une confiance grandissante chaque jour",
+      items: [
+        {
+          number: "500+",
+          label: "Clients satisfaits",
+          description: "Plus de 500 clients nous font confiance",
+        },
+        {
+          number: "1000+",
+          label: "Véhicules vendus",
+          description: "Un large choix de véhicules disponibles",
+        },
+        {
+          number: "98%",
+          label: "Taux de satisfaction",
+          description: "Nos clients sont très satisfaits",
+        },
+        {
+          number: "24/7",
+          label: "Support client",
+          description: "Une assistance disponible à tout moment",
+        },
+      ],
+    },
+    process: {
+      title: "Comment ça marche",
+      subtitle: "Un processus simple et rapide en 4 étapes",
+      steps: [
+        {
+          number: "01",
+          title: "Choisissez votre véhicule",
+          description: "Parcourez notre catalogue et sélectionnez le véhicule qui correspond à vos besoins et à votre budget.",
+        },
+        {
+          number: "02",
+          title: "Contactez-nous",
+          description: "Remplissez le formulaire de contact ou appelez-nous directement pour discuter de votre projet.",
+        },
+        {
+          number: "03",
+          title: "Finalisez votre achat",
+          description: "Nous vous accompagnons dans toutes les démarches : financement, assurance, et formalités administratives.",
+        },
+        {
+          number: "04",
+          title: "Livraison rapide",
+          description: "Recevez votre véhicule directement à votre domicile, prêt à rouler, avec toutes les garanties nécessaires.",
+        },
+      ],
+    },
+    whyChooseUs: {
+      title: "Pourquoi nous choisir",
+      subtitle: "Des avantages qui font la différence",
+      items: [
+        {
+          title: "Expertise reconnue",
+          description: "Plus de 10 ans d'expérience dans la vente de voitures sans permis. Notre expertise vous garantit des conseils avisés et un accompagnement personnalisé.",
+        },
+        {
+          title: "Large sélection",
+          description: "Un catalogue varié de véhicules neufs et d'occasion, toutes marques confondues : Aixam, Ligier, Chatenet, Casalini et bien d'autres.",
+        },
+        {
+          title: "Service complet",
+          description: "De l'achat à la livraison, en passant par le financement et l'assurance, nous vous accompagnons à chaque étape de votre projet.",
+        },
+        {
+          title: "Prix compétitifs",
+          description: "Des tarifs transparents et compétitifs, avec des solutions de financement adaptées à tous les budgets.",
+        },
+        {
+          title: "Garantie qualité",
+          description: "Tous nos véhicules sont vérifiés et garantis. Nous vous offrons une tranquillité d'esprit totale.",
+        },
+        {
+          title: "Livraison rapide",
+          description: "Service de livraison à domicile rapide et sécurisé, pour que vous puissiez profiter de votre véhicule sans attendre.",
+        },
+      ],
+    },
+    newsletter: {
+      title: "Restez informé",
+      subtitle: "Recevez nos dernières offres et actualités directement dans votre boîte mail",
+      placeholder: "Votre adresse email",
+      button: "S'abonner",
+      success: "Merci pour votre abonnement !",
+      error: "Une erreur est survenue. Veuillez réessayer.",
+    },
   },
 
   // Page Boutique

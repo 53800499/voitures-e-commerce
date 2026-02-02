@@ -31,33 +31,19 @@ if (!admin.apps.length) {
       // Option 2 : Utiliser Application Default Credentials
       // Pour le développement local, vous pouvez utiliser le service account key
       // Téléchargez-le depuis Firebase Console > Project Settings > Service Accounts
-      try {
-        admin.initializeApp({
-          projectId:
-            process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "shobmarket-341da"
-        });
-        console.log(
-          "✅ Firebase Admin SDK initialisé avec Application Default Credentials"
-        );
-        isInitialized = true;
-      } catch (error) {
-        console.warn(
-          "⚠️ Firebase Admin SDK: Initialisation partielle - certaines fonctionnalités peuvent être limitées",
-          error
-        );
-        // Essayer une initialisation minimale
-        try {
-          if (!admin.apps.length) {
-            admin.initializeApp({
-              projectId: "shobmarket-341da"
-            });
-            isInitialized = true;
-          }
-        } catch {
-          // Silently fail - on peut continuer sans Firebase complet en développement
-          isInitialized = false;
-        }
-      }
+      // OU configurez les variables d'environnement FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY
+      
+      // Ne pas essayer d'initialiser avec ADC si les credentials ne sont pas disponibles
+      // Cela évitera l'erreur "Could not load the default credentials"
+      console.warn(
+        "⚠️ Firebase Admin SDK: Les credentials ne sont pas configurés. " +
+        "Veuillez configurer les variables d'environnement suivantes :\n" +
+        "- FIREBASE_PROJECT_ID\n" +
+        "- FIREBASE_CLIENT_EMAIL\n" +
+        "- FIREBASE_PRIVATE_KEY\n" +
+        "Ou utilisez un fichier de service account key."
+      );
+      isInitialized = false;
     }
   } catch (error) {
     console.error(
@@ -102,10 +88,20 @@ if (admin.apps.length > 0) {
 
 // Fonction helper pour asserter que adminDb n'est pas null
 function getAdminDb(): admin.firestore.Firestore {
-  if (!adminDb) {
-    throw new Error(
-      "adminDb n'est pas initialisé. Vérifiez la configuration Firebase Admin SDK."
-    );
+  if (!adminDb || !isInitialized) {
+    const errorMessage = 
+      "Firebase Admin SDK n'est pas initialisé. " +
+      "Veuillez configurer les variables d'environnement suivantes dans votre fichier .env.local :\n" +
+      "- FIREBASE_PROJECT_ID\n" +
+      "- FIREBASE_CLIENT_EMAIL\n" +
+      "- FIREBASE_PRIVATE_KEY\n\n" +
+      "Pour obtenir ces informations :\n" +
+      "1. Allez sur Firebase Console > Project Settings > Service Accounts\n" +
+      "2. Cliquez sur 'Generate new private key'\n" +
+      "3. Utilisez les valeurs du fichier JSON généré pour remplir les variables d'environnement";
+    
+    console.error("❌", errorMessage);
+    throw new Error(errorMessage);
   }
   return adminDb;
 }

@@ -21,6 +21,11 @@ import {
 } from "react-icons/fi";
 import { FaHeart, FaStar } from "react-icons/fa";
 import Link from "next/link";
+import SlideUp from "@/components/animations/SlideUp";
+import FadeIn from "@/components/animations/FadeIn";
+import StaggerContainer from "@/components/animations/StaggerContainer";
+import StaggerItem from "@/components/animations/StaggerItem";
+import ScaleIn from "@/components/animations/ScaleIn";
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -134,7 +139,9 @@ export default function ProductDetailPage() {
         <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 animate-slide-up">
           <div className="bg-green-500 text-white px-6 py-3 shadow-lg flex items-center gap-3">
             <FiCheck className="text-xl" />
-            <span className="font-medium">{product.nom} ajouté au panier avec succès !</span>
+            <span className="font-medium">
+              {product.nom} ajouté au panier avec succès !
+            </span>
           </div>
         </div>
       )}
@@ -150,30 +157,43 @@ export default function ProductDetailPage() {
                   <Image
                     src={lastAddedItem.src || "/assets/images.jpg"}
                     alt={lastAddedItem.alt || lastAddedItem.nom}
-                            width={80}
+                    width={80}
                     height={80}
                     quality={100}
                     className="object-cover w-full h-full"
                   />
                 </div>
-                
+
                 {/* Informations */}
                 <div className="flex-1">
-                  <Typography variant="body-base" theme="black" weight="bold" className="mb-1">
+                  <Typography
+                    variant="body-base"
+                    theme="black"
+                    weight="bold"
+                    className="mb-1">
                     {lastAddedItem.nom}
                   </Typography>
                   <div className="flex flex-wrap gap-2 mb-2">
                     {lastAddedItem.selectedColor && (
-                      <Typography variant="caption2" theme="gray" className="bg-gray-100 px-2 py-1">
+                      <Typography
+                        variant="caption2"
+                        theme="gray"
+                        className="bg-gray-100 px-2 py-1">
                         Couleur: {lastAddedItem.selectedColor}
                       </Typography>
                     )}
                     {lastAddedItem.selectedSize && (
-                      <Typography variant="caption2" theme="gray" className="bg-gray-100 px-2 py-1">
+                      <Typography
+                        variant="caption2"
+                        theme="gray"
+                        className="bg-gray-100 px-2 py-1">
                         Taille: {lastAddedItem.selectedSize}
                       </Typography>
                     )}
-                    <Typography variant="caption2" theme="gray" className="bg-gray-100 px-2 py-1">
+                    <Typography
+                      variant="caption2"
+                      theme="gray"
+                      className="bg-gray-100 px-2 py-1">
                       Quantité: {lastAddedItem.quantity}
                     </Typography>
                   </div>
@@ -194,8 +214,7 @@ export default function ProductDetailPage() {
                   onClick={() => setShowStickyCart(false)}
                   className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
                   aria-label="Fermer"
-                  title="Fermer"
-                >
+                  title="Fermer">
                   <FiX size={20} />
                 </button>
               </div>
@@ -206,23 +225,26 @@ export default function ProductDetailPage() {
 
       <Container>
         {/* Breadcrumb */}
-        <nav className="mb-6">
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <Link href="/" className="hover:text-primary transition-colors">
-              Accueil
-            </Link>
-            <span>/</span>
-            <Link href="/shop" className="hover:text-primary transition-colors">
-              Boutique
-            </Link>
-            <span>/</span>
-            <span className="text-gray-800">{product.nom}</span>
-          </div>
-        </nav>
+        <SlideUp>
+          <nav className="mb-6">
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <Link href="/" className="hover:text-primary transition-colors">
+                Accueil
+              </Link>
+              <span>/</span>
+              <Link href="/shop" className="hover:text-primary transition-colors">
+                Boutique
+              </Link>
+              <span>/</span>
+              <span className="text-gray-800">{product.nom}</span>
+            </div>
+          </nav>
+        </SlideUp>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 mb-12 md:mb-16">
           {/* Galerie d'images */}
-          <div className="space-y-4">
+          <SlideUp delay={0.2}>
+            <div className="space-y-4">
             {/* Image principale */}
             <div className="relative aspect-square bg-white shadow-lg overflow-hidden group">
               <Image
@@ -234,7 +256,7 @@ export default function ProductDetailPage() {
                 className="object-cover w-full h-full"
                 priority
               />
-              
+
               {/* Navigation des images */}
               {allImages.length > 1 && (
                 <>
@@ -242,16 +264,14 @@ export default function ProductDetailPage() {
                     onClick={handlePreviousImage}
                     className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-lg hover:bg-white transition-all opacity-0 group-hover:opacity-100"
                     aria-label="Image précédente"
-                    title="Image précédente"
-                  >
+                    title="Image précédente">
                     <FiChevronLeft className="text-xl text-gray-800" />
                   </button>
                   <button
                     onClick={handleNextImage}
                     className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-lg hover:bg-white transition-all opacity-0 group-hover:opacity-100"
                     aria-label="Image suivante"
-                    title="Image suivante"
-                  >
+                    title="Image suivante">
                     <FiChevronRight className="text-xl text-gray-800" />
                   </button>
                 </>
@@ -268,13 +288,12 @@ export default function ProductDetailPage() {
               <button
                 onClick={() => setIsFavorite(!isFavorite)}
                 className="absolute top-4 right-4 w-12 h-12 bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-lg hover:bg-white transition-all"
-                aria-label={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
-              >
-                {isFavorite ? (
+                aria-label={
+                  isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"
+                }>
+                {isFavorite ?
                   <FaHeart className="text-xl text-red-500" />
-                ) : (
-                  <FiHeart className="text-xl text-gray-600" />
-                )}
+                : <FiHeart className="text-xl text-gray-600" />}
               </button>
             </div>
 
@@ -286,13 +305,12 @@ export default function ProductDetailPage() {
                     key={image.id}
                     onClick={() => setSelectedImageIndex(index)}
                     className={`relative aspect-square overflow-hidden border-2 transition-all ${
-                      selectedImageIndex === index
-                        ? "border-primary shadow-md"
-                        : "border-transparent hover:border-gray-300"
+                      selectedImageIndex === index ?
+                        "border-primary shadow-md"
+                      : "border-transparent hover:border-gray-300"
                     }`}
                     aria-label={`Voir l'image ${index + 1}`}
-                    title={`Image ${index + 1}`}
-                  >
+                    title={`Image ${index + 1}`}>
                     <Image
                       src={image.src || "/assets/images.jpg"}
                       alt={image.alt}
@@ -305,271 +323,336 @@ export default function ProductDetailPage() {
                 ))}
               </div>
             )}
-          </div>
+            </div>
+          </SlideUp>
 
           {/* Informations produit */}
-          <div className="space-y-6">
-            {/* Catégorie et nom */}
-            <div>
-              <Typography variant="caption4" theme="primary" weight="medium" className="mb-2">
-                {product.categorie}
-              </Typography>
-              <Typography variant="h1" theme="black" weight="bold" className="mb-4">
-                {product.nom}
-              </Typography>
-              
-              {/* Rating */}
-              <div className="flex items-center gap-2 mb-4">
-                <div className="flex items-center gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <FaStar
-                      key={i}
-                      className={`text-sm ${
-                        i < 4 ? "text-yellow-400" : "text-gray-300"
-                      }`}
-                    />
-                  ))}
-                </div>
-                <Typography variant="caption2" theme="gray">
-                  (4.5) - 12 avis
-                </Typography>
-              </div>
-            </div>
-
-            {/* Prix */}
-            <div className="flex items-baseline gap-4">
-              {originalPrice && (
+          <SlideUp delay={0.3}>
+            <div className="space-y-6">
+              {/* Catégorie et nom */}
+              <div>
                 <Typography
-                  variant="h4"
-                  theme="gray"
-                  weight="regular"
-                  className="line-through"
-                >
-                  {formatPrice(originalPrice)}
+                  variant="caption4"
+                  theme="primary"
+                  weight="medium"
+                  className="mb-2">
+                  {product.categorie}
                 </Typography>
+                <Typography
+                  variant="h1"
+                  theme="black"
+                  weight="bold"
+                  className="mb-4 text-2xl md:text-3xl lg:text-4xl">
+                  {product.nom}
+                </Typography>
+
+                {/* Rating */}
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="flex items-center gap-1">
+                    {[...Array(5)].map((_, i) => (
+                      <FaStar
+                        key={i}
+                        className={`text-sm ${
+                          i < 4 ? "text-yellow-400" : "text-gray-300"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <Typography variant="caption2" theme="gray" className="text-xs md:text-sm">
+                    (4.5) - 12 avis
+                  </Typography>
+                </div>
+              </div>
+
+              {/* Prix */}
+              <FadeIn delay={0.4}>
+                <div className="flex items-baseline gap-4">
+                  {originalPrice && (
+                    <Typography
+                      variant="h4"
+                      theme="gray"
+                      weight="regular"
+                      className="line-through text-lg md:text-xl">
+                      {formatPrice(originalPrice)}
+                    </Typography>
+                  )}
+                  <Typography variant="h1" theme="primary" weight="bold" className="text-3xl md:text-4xl">
+                    {formatPrice(currentPrice)}
+                  </Typography>
+                </div>
+              </FadeIn>
+
+              {/* Description */}
+              <FadeIn delay={0.5}>
+                <div className="space-y-2">
+                  <Typography variant="h5" theme="black" weight="bold" className="text-lg md:text-xl">
+                    Description
+                  </Typography>
+                  <Typography
+                    variant="body-base"
+                    theme="gray"
+                    weight="regular"
+                    className="leading-relaxed text-sm md:text-base">
+                    {product.description}
+                  </Typography>
+                  <Typography
+                    variant="body-base"
+                    theme="gray"
+                    weight="regular"
+                    className="leading-relaxed text-sm md:text-base">
+                    {product.description1}
+                  </Typography>
+                </div>
+              </FadeIn>
+
+              {/* Couleurs */}
+              {product.colors && product.colors.length > 0 && (
+                <FadeIn delay={0.6}>
+                  <div className="space-y-3">
+                    <Typography variant="h5" theme="black" weight="bold" className="text-lg md:text-xl">
+                      Couleur
+                    </Typography>
+                    <div className="flex gap-3">
+                      {product.colors.map((color, index) => (
+                        <ScaleIn key={color.id} delay={0.1 * index}>
+                          <button
+                            onClick={() => setSelectedColor(color.name)}
+                            className={`w-10 h-10 md:w-12 md:h-12 border-2 transition-all rounded ${
+                              selectedColor === color.name ?
+                                "border-primary scale-110 shadow-md"
+                              : "border-gray-300 hover:border-gray-400"
+                            }`}
+                            style={{ backgroundColor: color.code }}
+                            aria-label={color.name}>
+                            {selectedColor === color.name && (
+                              <div className="w-full h-full flex items-center justify-center">
+                                <FiCheck className="text-white text-base md:text-lg drop-shadow-lg" />
+                              </div>
+                            )}
+                          </button>
+                        </ScaleIn>
+                      ))}
+                    </div>
+                  </div>
+                </FadeIn>
               )}
-              <Typography variant="h1" theme="primary" weight="bold">
-                {formatPrice(currentPrice)}
-              </Typography>
-            </div>
 
-            {/* Description */}
-            <div className="space-y-2">
-              <Typography variant="h5" theme="black" weight="bold">
-                Description
-              </Typography>
-              <Typography variant="body-base" theme="gray" weight="regular" className="leading-relaxed">
-                {product.description}
-              </Typography>
-              <Typography variant="body-base" theme="gray" weight="regular" className="leading-relaxed">
-                {product.description1}
-              </Typography>
-            </div>
-
-            {/* Couleurs */}
-            {product.colors && product.colors.length > 0 && (
-              <div className="space-y-3">
-                <Typography variant="h5" theme="black" weight="bold">
-                  Couleur
-                </Typography>
-                <div className="flex gap-3">
-                  {product.colors.map((color) => (
-                    <button
-                      key={color.id}
-                      onClick={() => setSelectedColor(color.name)}
-                      className={`w-12 h-12 border-2 transition-all ${
-                        selectedColor === color.name
-                          ? "border-primary scale-110 shadow-md"
-                          : "border-gray-300 hover:border-gray-400"
-                      }`}
-                      style={{ backgroundColor: color.code }}
-                      aria-label={color.name}
-                    >
-                      {selectedColor === color.name && (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <FiCheck className="text-white text-lg drop-shadow-lg" />
-                        </div>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Taille */}
-            {product.sizes && product.sizes.length > 0 && (
-              <div className="space-y-3">
-                <Typography variant="h5" theme="black" weight="bold">
-                  Taille
-                </Typography>
-                <div className="flex gap-3">
-                  {product.sizes.map((size) => (
-                    <button
-                      key={size}
-                      onClick={() => setSelectedSize(size)}
-                      className={`px-6 py-3 border-2 transition-all ${
-                        selectedSize === size
-                          ? "border-primary bg-primary-50 text-primary"
-                          : "border-gray-300 hover:border-gray-400"
-                      }`}
-                    >
-                      <Typography variant="body-base" weight="medium">
-                        {size}
-                      </Typography>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Quantité */}
-            <div className="space-y-3">
-              <Typography variant="h5" theme="black" weight="bold">
-                Quantité
-              </Typography>
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
-                  className="w-12 h-12 border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors"
-                >
-                  <span className="text-xl">−</span>
-                </button>
-                <Typography variant="h4" theme="black" weight="bold" className="w-16 text-center">
-                  {quantity}
-                </Typography>
-                <button
-                  onClick={() => setQuantity((prev) => prev + 1)}
-                  className="w-12 h-12 border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors"
-                >
-                  <span className="text-xl">+</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Stock */}
-            {product.quantiteStock !== undefined && (
-              <div className="flex items-center gap-2">
-                {product.quantiteStock > 0 ? (
-                  <>
-                    <div className="w-3 h-3 bg-green-500"></div>
-                    <Typography variant="body-base" theme="primary" weight="medium" className="text-green-600">
-                      En stock ({product.quantiteStock} disponible{product.quantiteStock > 1 ? "s" : ""})
+              {/* Taille */}
+              {product.sizes && product.sizes.length > 0 && (
+                <FadeIn delay={0.7}>
+                  <div className="space-y-3">
+                    <Typography variant="h5" theme="black" weight="bold" className="text-lg md:text-xl">
+                      Taille
                     </Typography>
-                  </>
-                ) : (
-                  <>
-                    <div className="w-3 h-3 bg-red-500"></div>
-                    <Typography variant="body-base" theme="red" weight="medium">
-                      Rupture de stock
+                    <div className="flex gap-3 flex-wrap">
+                      {product.sizes.map((size, index) => (
+                        <ScaleIn key={size} delay={0.1 * index}>
+                          <button
+                            onClick={() => setSelectedSize(size)}
+                            className={`px-4 md:px-6 py-2 md:py-3 border-2 transition-all rounded ${
+                              selectedSize === size ?
+                                "border-primary bg-primary-50 text-primary"
+                              : "border-gray-300 hover:border-gray-400"
+                            }`}>
+                            <Typography variant="body-base" weight="medium" className="text-sm md:text-base">
+                              {size}
+                            </Typography>
+                          </button>
+                        </ScaleIn>
+                      ))}
+                    </div>
+                  </div>
+                </FadeIn>
+              )}
+
+              {/* Quantité */}
+              <FadeIn delay={0.8}>
+                <div className="space-y-3">
+                  <Typography variant="h5" theme="black" weight="bold" className="text-lg md:text-xl">
+                    Quantité
+                  </Typography>
+                  <div className="flex items-center gap-4">
+                    <button
+                      onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
+                      className="w-10 h-10 md:w-12 md:h-12 border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors rounded">
+                      <span className="text-lg md:text-xl text-gray-500">−</span>
+                    </button>
+                    <Typography
+                      variant="h4"
+                      theme="black"
+                      weight="bold"
+                      className="w-12 md:w-16 text-center text-xl md:text-2xl">
+                      {quantity}
                     </Typography>
-                  </>
-                )}
-              </div>
-            )}
+                    <button
+                      onClick={() => setQuantity((prev) => prev + 1)}
+                      className="w-10 h-10 md:w-12 md:h-12 border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors rounded">
+                      <span className="text-lg md:text-xl text-gray-500">+</span>
+                    </button>
+                  </div>
+                </div>
+              </FadeIn>
 
-            {/* Boutons d'action */}
-            <div className="flex gap-4 pt-4">
-              <Button
-                variant="accent"
-                size="large"
-                fullwidth
-                action={handleAddToCart}
-                icon={{ icon: FiShoppingCart }}
-                iconPosition="left"
-                disabled={product.quantiteStock === 0}
-              >
-                Ajouter au panier
-              </Button>
-            </div>
+              {/* Stock */}
+              {product.quantiteStock !== undefined && (
+                <FadeIn delay={0.9}>
+                  <div className="flex items-center gap-2">
+                    {product.quantiteStock > 0 ?
+                      <>
+                        <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                        <Typography
+                          variant="body-base"
+                          theme="primary"
+                          weight="medium"
+                          className="text-green-600 text-sm md:text-base">
+                          En stock ({product.quantiteStock} disponible
+                          {product.quantiteStock > 1 ? "s" : ""})
+                        </Typography>
+                      </>
+                    : <>
+                        <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                        <Typography variant="body-base" theme="red" weight="medium" className="text-sm md:text-base">
+                          Rupture de stock
+                        </Typography>
+                      </>
+                    }
+                  </div>
+                </FadeIn>
+              )}
 
-            {/* Garanties */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-6 border-t border-gray-200">
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 bg-primary-100 flex items-center justify-center flex-shrink-0">
-                  <FiTruck className="text-blue-600 text-xl" />
+              {/* Boutons d'action */}
+              <FadeIn delay={1.0}>
+                <div className="flex gap-4 pt-4">
+                  <Button
+                    variant="accent"
+                    size="large"
+                    fullwidth
+                    action={handleAddToCart}
+                    icon={{ icon: FiShoppingCart }}
+                    iconPosition="left"
+                    disabled={product.quantiteStock === 0}>
+                    Ajouter au panier
+                  </Button>
                 </div>
-                <div>
-                  <Typography variant="body-base" theme="black" weight="bold">
-                    Livraison rapide
-                  </Typography>
-                  <Typography variant="caption2" theme="gray">
-                    Livraison en 24-48h
-                  </Typography>
+              </FadeIn>
+
+              {/* Garanties */}
+              <StaggerContainer>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-6 border-t border-gray-200">
+                  <StaggerItem>
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 bg-primary-100 flex items-center justify-center flex-shrink-0 rounded-lg">
+                        <FiTruck className="text-blue-600 text-lg md:text-xl" />
+                      </div>
+                      <div>
+                        <Typography variant="body-base" theme="black" weight="bold" className="text-sm md:text-base">
+                          Livraison rapide
+                        </Typography>
+                        <Typography variant="caption2" theme="gray" className="text-xs md:text-sm">
+                          Livraison en 24-48h
+                        </Typography>
+                      </div>
+                    </div>
+                  </StaggerItem>
+                  <StaggerItem>
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 bg-primary-100 flex items-center justify-center flex-shrink-0 rounded-lg">
+                        <FiShield className="text-green-600 text-lg md:text-xl" />
+                      </div>
+                      <div>
+                        <Typography variant="body-base" theme="black" weight="bold" className="text-sm md:text-base">
+                          Paiement sécurisé
+                        </Typography>
+                        <Typography variant="caption2" theme="gray" className="text-xs md:text-sm">
+                          100% sécurisé
+                        </Typography>
+                      </div>
+                    </div>
+                  </StaggerItem>
+                  <StaggerItem>
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 bg-primary-100 flex items-center justify-center flex-shrink-0 rounded-lg">
+                        <FiRotateCw className="text-purple-600 text-lg md:text-xl" />
+                      </div>
+                      <div>
+                        <Typography variant="body-base" theme="black" weight="bold" className="text-sm md:text-base">
+                          Retour facile
+                        </Typography>
+                        <Typography variant="caption2" theme="gray" className="text-xs md:text-sm">
+                          30 jours pour retourner
+                        </Typography>
+                      </div>
+                    </div>
+                  </StaggerItem>
                 </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 bg-primary-100 flex items-center justify-center flex-shrink-0">
-                  <FiShield className="text-green-600 text-xl" />
-                </div>
-                <div>
-                  <Typography variant="body-base" theme="black" weight="bold">
-                    Paiement sécurisé
-                  </Typography>
-                  <Typography variant="caption2" theme="gray">
-                    100% sécurisé
-                  </Typography>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 bg-primary-100 flex items-center justify-center flex-shrink-0">
-                  <FiRotateCw className="text-purple-600 text-xl" />
-                </div>
-                <div>
-                  <Typography variant="body-base" theme="black" weight="bold">
-                    Retour facile
-                  </Typography>
-                  <Typography variant="caption2" theme="gray">
-                    30 jours pour retourner
-                  </Typography>
-                </div>
-              </div>
+              </StaggerContainer>
             </div>
-          </div>
+          </SlideUp>
         </div>
 
         {/* Section détails supplémentaires */}
-        <div className="mt-16 bg-white shadow-md p-8">
-          <Typography variant="h2" theme="black" weight="bold" className="mb-6">
-            Détails du produit
-          </Typography>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <Typography variant="h5" theme="black" weight="bold" className="mb-2">
-                Caractéristiques
-              </Typography>
-              <ul className="space-y-2">
-                <li className="flex items-center gap-2">
-                  <FiCheck className="text-green-500" />
-                  <Typography variant="body-base" theme="gray">
-                    Catégorie: {product.categorie}
+        <SlideUp delay={0.4}>
+          <div className="mt-12 md:mt-16 bg-white shadow-md p-6 md:p-8 rounded-xl">
+            <Typography variant="h2" theme="black" weight="bold" className="mb-4 md:mb-6 text-xl md:text-2xl">
+              Détails du produit
+            </Typography>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FadeIn delay={0.5}>
+                <div>
+                  <Typography
+                    variant="h5"
+                    theme="black"
+                    weight="bold"
+                    className="mb-2 text-lg md:text-xl">
+                    Caractéristiques
                   </Typography>
-                </li>
-                <li className="flex items-center gap-2">
-                  <FiCheck className="text-green-500" />
-                  <Typography variant="body-base" theme="gray">
-                    Stock disponible: {product.quantiteStock || "N/A"}
+                  <ul className="space-y-2">
+                    <li className="flex items-center gap-2">
+                      <FiCheck className="text-green-500" />
+                      <Typography variant="body-base" theme="gray" className="text-sm md:text-base">
+                        Catégorie: {product.categorie}
+                      </Typography>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <FiCheck className="text-green-500" />
+                      <Typography variant="body-base" theme="gray" className="text-sm md:text-base">
+                        Stock disponible: {product.quantiteStock || "N/A"}
+                      </Typography>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <FiCheck className="text-green-500" />
+                      <Typography variant="body-base" theme="gray" className="text-sm md:text-base">
+                        Date d&apos;ajout:{" "}
+                        {new Date(product.dateAjout).toLocaleDateString("fr-FR")}
+                      </Typography>
+                    </li>
+                  </ul>
+                </div>
+              </FadeIn>
+              <FadeIn delay={0.6}>
+                <div>
+                  <Typography
+                    variant="h5"
+                    theme="black"
+                    weight="bold"
+                    className="mb-2 text-lg md:text-xl">
+                    Informations complémentaires
                   </Typography>
-                </li>
-                <li className="flex items-center gap-2">
-                  <FiCheck className="text-green-500" />
-                  <Typography variant="body-base" theme="gray">
-                    Date d&apos;ajout: {new Date(product.dateAjout).toLocaleDateString("fr-FR")}
+                  <Typography
+                    variant="body-base"
+                    theme="gray"
+                    weight="regular"
+                    className="leading-relaxed text-sm md:text-base">
+                    Ce véhicule sans permis est parfaitement adapté à vos besoins de
+                    mobilité. Conçu avec les dernières technologies et respectant
+                    les normes de sécurité les plus strictes, il vous offre confort
+                    et performance au quotidien.
                   </Typography>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <Typography variant="h5" theme="black" weight="bold" className="mb-2">
-                Informations complémentaires
-              </Typography>
-              <Typography variant="body-base" theme="gray" weight="regular" className="leading-relaxed">
-                Ce véhicule sans permis est parfaitement adapté à vos besoins de mobilité. 
-                Conçu avec les dernières technologies et respectant les normes de sécurité les plus strictes, 
-                il vous offre confort et performance au quotidien.
-              </Typography>
+                </div>
+              </FadeIn>
             </div>
           </div>
-        </div>
+        </SlideUp>
       </Container>
     </div>
   );

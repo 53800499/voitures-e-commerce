@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { usePathname } from "next/navigation";
 import NavigationSimple from "../navigation/navigation-simple";
 import FooterSimple from "../navigation/footer-simple";
 import { CartProvider } from "@/context/cartContext";
@@ -12,13 +13,16 @@ interface Props {
 }
 
 export default function LayoutSimple({ children }: Props) {
+  const pathname = usePathname();
+  const isDashboardPage = pathname?.includes("/dashboard");
+
   return (
     <AuthUserProvider>
       <CartProvider>
         <NotificationProvider>
-          <NavigationSimple />
+          {!isDashboardPage && <NavigationSimple />}
           {children}  
-          <FooterSimple />
+          {!isDashboardPage && <FooterSimple />}
         </NotificationProvider>
       </CartProvider>
     </AuthUserProvider>

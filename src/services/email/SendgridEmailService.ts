@@ -75,9 +75,7 @@ export class SendgridEmailService {
     }
 
     try {
-      console.log(
-        `📧 [SendgridEmailService] Envoi d'email à ${options.to}...`
-      );
+      console.log(`📧 [SendgridEmailService] Envoi d'email à ${options.to}...`);
 
       const msg = {
         to: options.to,
@@ -102,9 +100,9 @@ export class SendgridEmailService {
       };
     } catch (error) {
       const errorMessage =
-        error && typeof error === "object" && "message" in error
-          ? String(error.message)
-          : "Erreur inconnue";
+        error && typeof error === "object" && "message" in error ?
+          String(error.message)
+        : "Erreur inconnue";
 
       console.error(
         `❌ [SendgridEmailService] Erreur lors de l'envoi: ${errorMessage}`
@@ -124,10 +122,10 @@ export class SendgridEmailService {
     userEmail: string;
     orderId: string;
     orderDate: string;
-    items: Array<{name: string; quantity: number; price: number}>;
+    items: Array<{ name: string; quantity: number; price: number }>;
     totalAmount: number;
     customerName: string;
-  }): Promise<{success: boolean; messageId?: string; error?: string}> {
+  }): Promise<{ success: boolean; messageId?: string; error?: string }> {
     const itemsList = orderEmailData.items
       .map(
         (item) =>
@@ -214,11 +212,14 @@ export class SendgridEmailService {
     orderId: string;
     userEmail: string;
     userName: string;
-    items: Array<{name: string; quantity: number; price: number}>;
+    items: Array<{ name: string; quantity: number; price: number }>;
     totalAmount: number;
-  }): Promise<{success: boolean; messageId?: string; error?: string}> {
+  }): Promise<{ success: boolean; messageId?: string; error?: string }> {
     const itemsList = orderEmailData.items
-      .map((item) => `- ${item.name} x${item.quantity} = ${(item.quantity * item.price).toFixed(2)}€`)
+      .map(
+        (item) =>
+          `- ${item.name} x${item.quantity} = ${(item.quantity * item.price).toFixed(2)}€`
+      )
       .join("\n");
 
     const text = `
@@ -258,7 +259,7 @@ ${itemsList}
     }>;
     totalAmount: number;
     currency: string;
-  }): Promise<{success: boolean; messageId?: string; error?: string}> {
+  }): Promise<{ success: boolean; messageId?: string; error?: string }> {
     const itemsList = data.items
       .map(
         (item) =>
@@ -368,16 +369,114 @@ L'équipe SnipersMarket
       text
     });
   }
+  /**
+   * Envoie une notification de réapprovisionnement de stock
+   */
+  async sendStockRestockNotification(data: {
+    email: string;
+    productName: string;
+    productUrl: string;
+  }): Promise<void> {
+    const html = this.generateStockRestockHTML(data);
+    const text = this.generateStockRestockText(data);
 
+    await this.sendEmail({
+      to: data.email,
+      subject: `✅ ${data.productName} est de nouveau en stock !`,
+      html,
+      text
+    });
+  }
+  /**
+   * Génère le HTML de notification de réapprovisionnement
+   */
+  private generateStockRestockHTML(data: {
+    productName: string;
+    productUrl: string;
+  }): string {
+    return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Produit de nouveau en stock</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+    <h1 style="color: white; margin: 0;">✅ Produit de nouveau en stock !</h1>
+  </div>
+  
+  <div style="background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px;">
+    <p style="font-size: 16px;">Bonjour,</p>
+    
+    <p>Bonne nouvelle ! Le produit que vous attendiez est de nouveau disponible :</p>
+    
+    <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #10b981;">
+      <h2 style="margin-top: 0; color: #059669;">${data.productName}</h2>
+      <p style="color: #666;">Ce produit est maintenant disponible à la commande.</p>
+    </div>
+    
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="${data.productUrl}" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+        Voir le produit
+      </a>
+    </div>
+    
+    <p style="color: #666; font-size: 14px; margin-top: 30px;">
+      Ne manquez pas cette occasion ! Les stocks sont limités.
+    </p>
+    
+    <p style="color: #666; font-size: 14px; margin-top: 30px;">
+      Cordialement,<br>
+      L'équipe SnipersMarket
+    </p>
+  </div>
+</body>
+</html>
+    `;
+  }
+  /**
+   * Génère le texte brut de notification de réapprovisionnement
+   */
+  private generateStockRestockText(data: {
+    productName: string;
+    productUrl: string;
+  }): string {
+    return `
+Produit de nouveau en stock
+
+Bonjour,
+
+Bonne nouvelle ! Le produit que vous attendiez est de nouveau disponible :
+
+${data.productName}
+
+Ce produit est maintenant disponible à la commande.
+
+Voir le produit : ${data.productUrl}
+
+Ne manquez pas cette occasion ! Les stocks sont limités.
+
+Cordialement,
+L'équipe SnipersMarket
+    `;
+  }
   /**
    * Envoie un rappel de panier abandonné
    */
-  async sendCartAbandonmentReminder(email: string, cartData: {
-    items: Array<{name: string; quantity: number; price: number}>;
-    total: number;
-  }): Promise<{success: boolean; messageId?: string; error?: string}> {
+  async sendCartAbandonmentReminder(
+    email: string,
+    cartData: {
+      items: Array<{ name: string; quantity: number; price: number }>;
+      total: number;
+    }
+  ): Promise<{ success: boolean; messageId?: string; error?: string }> {
     const itemsList = cartData.items
-      .map((item) => `- ${item.name} x${item.quantity} = ${(item.quantity * item.price).toFixed(2)}€`)
+      .map(
+        (item) =>
+          `- ${item.name} x${item.quantity} = ${(item.quantity * item.price).toFixed(2)}€`
+      )
       .join("\n");
 
     const html = `
@@ -399,3 +498,5 @@ L'équipe SnipersMarket
 }
 
 export default SendgridEmailService;
+export const emailService = new SendgridEmailService();
+

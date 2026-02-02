@@ -1,3 +1,5 @@
+/** @format */
+
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
@@ -13,6 +15,7 @@ import { FaBars, FaSearch, FaTimes } from "react-icons/fa";
 import { FiUser } from "react-icons/fi";
 import clsx from "clsx";
 import AdvancedSearch from "@/components/search/AdvancedSearch";
+import SearchBar from "../search/SearchBar";
 
 interface NavigationLinkProps {
   href: string;
@@ -31,8 +34,7 @@ function NavigationLink({ href, children, className }: NavigationLinkProps) {
         className,
         isActive ? "text-primary font-medium" : "text-gray-900",
         "hover:text-primary transition-colors"
-      )}
-    >
+      )}>
       {children}
     </Link>
   );
@@ -105,8 +107,7 @@ export default function NavigationSimple() {
             {/* Logo - Plus petit sur mobile */}
             <Link
               href="/"
-              className="flex items-center gap-1.5 lg:gap-2 transition-all duration-300"
-            >
+              className="flex items-center gap-1.5 lg:gap-2 transition-all duration-300">
               <div className="w-7 h-7 lg:w-9 lg:h-9 bg-primary flex items-center justify-center text-white font-bold text-xs lg:text-sm">
                 AL
               </div>
@@ -122,8 +123,7 @@ export default function NavigationSimple() {
                 onClick={handleSearchClick}
                 className="p-2 text-gray-600 hover:text-primary transition-colors lg:hidden"
                 aria-label="Rechercher"
-                title="Rechercher"
-              >
+                title="Rechercher">
                 <FaSearch size={18} />
               </button>
 
@@ -132,8 +132,7 @@ export default function NavigationSimple() {
                 href="/cart"
                 className="relative p-2 text-gray-600 hover:text-primary transition-colors"
                 aria-label={wording.navigation.cart}
-                title={wording.navigation.cart}
-              >
+                title={wording.navigation.cart}>
                 <HiOutlineShoppingCart size={20} className="lg:w-6 lg:h-6" />
                 {cartItemsCount > 0 && (
                   <span className="absolute top-0 right-0 w-4 h-4 lg:w-5 lg:h-5 bg-primary text-white text-[10px] lg:text-xs font-bold flex items-center justify-center">
@@ -143,13 +142,12 @@ export default function NavigationSimple() {
               </Link>
 
               {/* User Menu - Mobile */}
-              {authUser ? (
+              {authUser ?
                 <div className="relative lg:hidden" ref={userMenuRef}>
                   <button
                     onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                     className="p-2 text-gray-600 hover:text-primary transition-colors"
-                    aria-label="Menu utilisateur"
-                  >
+                    aria-label="Menu utilisateur">
                     <div className="relative">
                       <FiUser size={18} />
                       <span className="absolute top-0 right-0 w-1.5 h-1.5 lg:w-2 lg:h-2 bg-green-500 border border-white"></span>
@@ -160,24 +158,26 @@ export default function NavigationSimple() {
                     <div className="absolute right-0 z-50 mt-2 w-48 bg-white border border-gray-200 shadow-lg">
                       <div className="px-3 py-2 border-b border-gray-200">
                         <p className="text-xs font-medium text-gray-900 truncate">
-                          {authUser.prenom || authUser.email?.split("@")[0] || "Profil"}
+                          {authUser.prenom ||
+                            authUser.email?.split("@")[0] ||
+                            "Profil"}
                         </p>
-                        <p className="text-[10px] text-gray-500 truncate">{authUser.email}</p>
+                        <p className="text-[10px] text-gray-500 truncate">
+                          {authUser.email}
+                        </p>
                       </div>
                       <div className="py-1">
                         <Link
                           href="/profile"
                           className="block px-3 py-2 text-xs text-gray-700 hover:bg-gray-100"
-                          onClick={() => setIsUserMenuOpen(false)}
-                        >
+                          onClick={() => setIsUserMenuOpen(false)}>
                           {wording.navigation.profile}
                         </Link>
                         {!checkingAdmin && userIsAdmin && (
                           <Link
                             href="/dashboard"
                             className="block px-3 py-2 text-xs font-medium text-primary hover:bg-gray-100"
-                            onClick={() => setIsUserMenuOpen(false)}
-                          >
+                            onClick={() => setIsUserMenuOpen(false)}>
                             {wording.navigation.adminDashboard}
                           </Link>
                         )}
@@ -185,30 +185,29 @@ export default function NavigationSimple() {
                     </div>
                   )}
                 </div>
-              ) : (
-                <Link
+              : <Link
                   href="/login"
                   className="p-2 text-gray-600 hover:text-primary transition-colors lg:hidden"
-                  aria-label={wording.navigation.login}
-                >
+                  aria-label={wording.navigation.login}>
                   <FiUser size={18} />
                 </Link>
-              )}
+              }
 
               {/* User Menu - Desktop */}
-              {authUser ? (
+              {authUser ?
                 <div className="hidden lg:block relative" ref={userMenuRef}>
                   <button
                     onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                     className="flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-primary transition-colors"
-                    aria-label="Menu utilisateur"
-                  >
+                    aria-label="Menu utilisateur">
                     <div className="relative">
                       <FiUser size={20} />
                       <span className="absolute top-0 right-0 w-2 h-2 bg-green-500 border-2 border-white"></span>
                     </div>
                     <span className="text-sm font-medium">
-                      {authUser.prenom || authUser.email?.split("@")[0] || "Profil"}
+                      {authUser.prenom ||
+                        authUser.email?.split("@")[0] ||
+                        "Profil"}
                     </span>
                   </button>
 
@@ -216,24 +215,26 @@ export default function NavigationSimple() {
                     <div className="absolute right-0 z-50 mt-2 w-56 bg-white border border-gray-200 shadow-lg">
                       <div className="px-4 py-3 border-b border-gray-200">
                         <p className="text-sm font-medium text-gray-900">
-                          {authUser.prenom || authUser.email?.split("@")[0] || "Profil"}
+                          {authUser.prenom ||
+                            authUser.email?.split("@")[0] ||
+                            "Profil"}
                         </p>
-                        <p className="text-xs text-gray-500">{authUser.email}</p>
+                        <p className="text-xs text-gray-500">
+                          {authUser.email}
+                        </p>
                       </div>
                       <div className="py-1">
                         <Link
                           href="/profile"
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          onClick={() => setIsUserMenuOpen(false)}
-                        >
+                          onClick={() => setIsUserMenuOpen(false)}>
                           {wording.navigation.profile}
                         </Link>
                         {!checkingAdmin && userIsAdmin && (
                           <Link
                             href="/dashboard"
                             className="block px-4 py-2 text-sm font-medium text-primary hover:bg-gray-100"
-                            onClick={() => setIsUserMenuOpen(false)}
-                          >
+                            onClick={() => setIsUserMenuOpen(false)}>
                             {wording.navigation.adminDashboard}
                           </Link>
                         )}
@@ -241,31 +242,30 @@ export default function NavigationSimple() {
                     </div>
                   )}
                 </div>
-              ) : (
-                <Link
+              : <Link
                   href="/login"
-                  className="hidden lg:flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-primary transition-colors"
-                >
+                  className="hidden lg:flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-primary transition-colors">
                   <FiUser size={20} />
                   <span className="text-sm font-medium">
                     {wording.navigation.login}
                   </span>
                 </Link>
-              )}
+              }
 
               {/* Menu Hamburger - Mobile uniquement */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className="p-2 text-gray-600 hover:text-primary transition-colors lg:hidden"
-                aria-label="Toggle mobile menu"
-              >
-                {isMobileMenuOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
+                aria-label="Toggle mobile menu">
+                {isMobileMenuOpen ?
+                  <FaTimes size={20} />
+                : <FaBars size={20} />}
               </button>
             </div>
           </div>
 
           {/* Desktop Menu - Caché sur mobile */}
-          <div className="hidden lg:flex items-center justify-between px-6 pb-2 border-t border-gray-100">
+          <div className="hidden lg:flex items-center justify-between px-6 pb-2 border-t border-gray-300">
             <div className="flex items-center gap-6">
               <NavigationLink href="/" className="text-sm font-medium">
                 {wording.navigation.home}
@@ -273,7 +273,9 @@ export default function NavigationSimple() {
               <NavigationLink href="/shop" className="text-sm font-medium">
                 {wording.navigation.shop}
               </NavigationLink>
-              <NavigationLink href="/track-order" className="text-sm font-medium">
+              <NavigationLink
+                href="/track-order"
+                className="text-sm font-medium">
                 {wording.navigation.trackOrder}
               </NavigationLink>
               <NavigationLink href="/about" className="text-sm font-medium">
@@ -284,10 +286,10 @@ export default function NavigationSimple() {
               </NavigationLink>
             </div>
             {/* Desktop Search Bar */}
-            <form
+            <SearchBar />
+            {/* <form
               onSubmit={handleSearch}
-              className="flex items-center px-3 py-2 bg-gray-100 border w-64"
-            >
+              className="flex items-center px-3 py-2 my-2 bg-gray-100 border w-64">
               <input
                 type="text"
                 placeholder={wording.navigation.searchPlaceholder}
@@ -300,11 +302,10 @@ export default function NavigationSimple() {
                 type="submit"
                 className="text-gray-400 hover:text-primary transition-colors"
                 aria-label="Rechercher"
-                title="Rechercher"
-              >
+                title="Rechercher">
                 <FaSearch size={16} />
               </button>
-            </form>
+            </form> */}
           </div>
         </Container>
 
@@ -313,42 +314,36 @@ export default function NavigationSimple() {
           className={clsx(
             "lg:hidden bg-white border-t border-gray-200 transition-all duration-300 ease-in-out overflow-hidden",
             isMobileMenuOpen ? "max-h-[calc(100vh-4rem)]" : "max-h-0"
-          )}
-        >
+          )}>
           <div className="px-4 py-3 space-y-1">
             <Link
               href="/"
               className="block py-2.5 px-4 text-sm font-medium hover:bg-gray-50 transition-colors text-gray-900"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
+              onClick={() => setIsMobileMenuOpen(false)}>
               {wording.navigation.home}
             </Link>
             <Link
               href="/shop"
               className="block py-2.5 px-4 text-sm font-medium hover:bg-gray-50 transition-colors text-gray-900"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
+              onClick={() => setIsMobileMenuOpen(false)}>
               {wording.navigation.shop}
             </Link>
             <Link
               href="/track-order"
               className="block py-2.5 px-4 text-sm font-medium hover:bg-gray-50 transition-colors text-gray-900"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
+              onClick={() => setIsMobileMenuOpen(false)}>
               {wording.navigation.trackOrder}
             </Link>
             <Link
               href="/about"
               className="block py-2.5 px-4 text-sm font-medium hover:bg-gray-50 transition-colors text-gray-900"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
+              onClick={() => setIsMobileMenuOpen(false)}>
               {wording.navigation.about}
             </Link>
             <Link
               href="/contact"
               className="block py-2.5 px-4 text-sm font-medium hover:bg-gray-50 transition-colors text-gray-900"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
+              onClick={() => setIsMobileMenuOpen(false)}>
               {wording.navigation.contact}
             </Link>
             {authUser && (
@@ -357,16 +352,14 @@ export default function NavigationSimple() {
                 <Link
                   href="/profile"
                   className="block py-2.5 px-4 text-sm font-medium hover:bg-gray-50 transition-colors text-gray-900"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
+                  onClick={() => setIsMobileMenuOpen(false)}>
                   {wording.navigation.profile}
                 </Link>
                 {!checkingAdmin && userIsAdmin && (
                   <Link
                     href="/dashboard"
                     className="block py-2.5 px-4 text-sm font-medium text-primary hover:bg-gray-50 transition-colors"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
+                    onClick={() => setIsMobileMenuOpen(false)}>
                     {wording.navigation.adminDashboard}
                   </Link>
                 )}
@@ -378,8 +371,7 @@ export default function NavigationSimple() {
                 <Link
                   href="/login"
                   className="block py-2.5 px-4 text-sm font-medium hover:bg-gray-50 transition-colors text-gray-900"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
+                  onClick={() => setIsMobileMenuOpen(false)}>
                   {wording.navigation.login}
                 </Link>
               </>
@@ -399,4 +391,3 @@ export default function NavigationSimple() {
     </>
   );
 }
-

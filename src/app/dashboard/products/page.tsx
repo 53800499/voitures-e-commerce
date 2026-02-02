@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import Typography from "@/ui/designSystem/typography/typography";
 import Button from "@/ui/designSystem/button/button";
@@ -8,29 +8,37 @@ import { wording } from "@/utils/wording";
 import { FiPlus, FiEdit, FiTrash2, FiPackage } from "react-icons/fi";
 import { useNotification } from "@/components/notifications/NotificationProvider";
 import Link from "next/link";
-
-// Mock data pour la démo
-const mockProducts = [
-  {
-    id: "1",
-    nom: "Voiture sans permis Aixam",
-    prix: 8990,
-    categorie: "Voitures neuves",
-    quantiteStock: 5,
-  },
-  {
-    id: "2",
-    nom: "Voiture sans permis Ligier",
-    prix: 7990,
-    categorie: "Voitures neuves",
-    quantiteStock: 3,
-  },
-];
+import { ProductDocument } from "@/services/dashboard/ProductService";
+import Image from "next/image";
 
 export default function ProductsPage() {
   const { showNotification } = useNotification();
-  const [products, setProducts] = useState(mockProducts);
-  const [isLoading, setIsLoading] = useState(false);
+  const [products, setProducts] = useState<ProductDocument[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch("/api/dashboard/products");
+        const data = await response.json();
+
+        if (data.success) {
+          setProducts(data.products);
+        } else {
+          throw new Error(data.error || "Erreur lors du chargement");
+        }
+      } catch (error) {
+        console.error("Erreur lors du chargement des produits:", error);
+        showNotification(error instanceof Error ? error.message : "Erreur lors du chargement des produits", "error");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadProducts();
+  }, [showNotification]);
 
   const handleDelete = async (id: string) => {
     if (!confirm(wording.dashboard.products.deleteConfirm)) {
@@ -38,14 +46,24 @@ export default function ProductsPage() {
     }
 
     try {
-      setIsLoading(true);
-      // TODO: Appeler le service de suppression
-      setProducts(products.filter((p) => p.id !== id));
-      showNotification(wording.dashboard.products.deleteSuccess, "success");
-    } catch {
-      showNotification("Erreur lors de la suppression", "error");
+      setIsDeleting(true);
+      const response = await fetch(`/api/dashboard/products/${id}`, {
+        method: "DELETE",
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setProducts(products.filter((p) => p.id !== id));
+        showNotification(wording.dashboard.products.deleteSuccess, "success");
+      } else {
+        throw new Error(data.error || "Erreur lors de la suppression");
+      }
+    } catch (error) {
+      console.error("Erreur lors de la suppression:", error);
+      showNotification(error instanceof Error ? error.message : "Erreur lors de la suppression", "error");
     } finally {
-      setIsLoading(false);
+      setIsDeleting(false);
     }
   };
 
@@ -71,7 +89,13 @@ export default function ProductsPage() {
         </div>
 
         {/* Liste des produits */}
-        {products.length === 0 ? (
+        {isLoading ? (
+          <div className="bg-white p-12 border border-gray-200 text-center">
+            <Typography variant="body-lg" theme="gray">
+              Chargement des produits...
+            </Typography>
+          </div>
+        ) : products.length === 0 ? (
           <div className="bg-white p-12 border border-gray-200 text-center">
             <FiPackage className="mx-auto text-gray-400 mb-4" size={48} />
             <Typography variant="body-lg" theme="gray" className="mb-2">
@@ -87,7 +111,12 @@ export default function ProductsPage() {
           <div className="bg-white border border-gray-200 overflow-hidden">
             {/* Table Header - Desktop */}
             <div className="hidden md:grid md:grid-cols-12 gap-4 p-4 bg-gray-50 border-b border-gray-200">
-              <div className="col-span-4">
+              <div className="col-span-1">
+                <Typography variant="body-sm" theme="black" weight="bold">
+                  Image
+                </Typography>
+              </div>
+              <div className="col-span-3">
                 <Typography variant="body-sm" theme="black" weight="bold">
                   {wording.dashboard.products.name}
                 </Typography>
@@ -121,7 +150,33 @@ export default function ProductsPage() {
                   key={product.id}
                   className="grid grid-cols-1 md:grid-cols-12 gap-4 p-4 hover:bg-gray-50 transition-colors"
                 >
-                  <div className="col-span-1 md:col-span-4">
+                  {/* Image */}
+                  <div className="col-span-1">
+                    <Typography variant="body-sm" theme="gray" className="mb-1 md:hidden">
+                      Image
+                    </Typography>
+                    <div className="relative w-16 h-16 md:w-20 md:h-20 bg-gray-100 rounded overflow-hidden shrink-0">
+                      {product.src ? (
+                        <Image
+                          src={product.src}
+                          alt={product.alt || product.nom || "Produit"}
+                          fill
+                          className="object-cover"
+                          quality={100}
+                          sizes="(max-width: 768px) 64px, 80px"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                          <FiPackage className="text-gray-400" size={24} />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  {/* Nom */}
+                  <div className="col-span-1 md:col-span-3">
+                    <Typography variant="body-sm" theme="gray" className="mb-1 md:hidden">
+                      {wording.dashboard.products.name}
+                    </Typography>
                     <Typography variant="body-base" theme="black" weight="bold" className="mb-1">
                       {product.nom}
                     </Typography>
@@ -131,7 +186,7 @@ export default function ProductsPage() {
                       {wording.dashboard.products.price}
                     </Typography>
                     <Typography variant="body-base" theme="black">
-                      {product.prix.toLocaleString("fr-FR")} €
+                      {(product.prix || 0).toLocaleString("fr-FR")} €
                     </Typography>
                   </div>
                   <div className="col-span-1 md:col-span-2">
@@ -139,7 +194,7 @@ export default function ProductsPage() {
                       {wording.dashboard.products.category}
                     </Typography>
                     <Typography variant="body-base" theme="black">
-                      {product.categorie}
+                      {product.categorie || "Non catégorisé"}
                     </Typography>
                   </div>
                   <div className="col-span-1 md:col-span-2">
@@ -147,7 +202,7 @@ export default function ProductsPage() {
                       {wording.dashboard.products.stock}
                     </Typography>
                     <Typography variant="body-base" theme="black">
-                      {product.quantiteStock || 0}
+                      {product.quantiteStock ?? 0}
                     </Typography>
                   </div>
                   <div className="col-span-1 md:col-span-2">
@@ -167,7 +222,7 @@ export default function ProductsPage() {
                         onClick={() => handleDelete(product.id)}
                         className="p-2 text-red-600 hover:bg-red-50 transition-colors"
                         title={wording.dashboard.products.delete}
-                        disabled={isLoading}
+                        disabled={isDeleting}
                       >
                         <FiTrash2 size={18} />
                       </button>

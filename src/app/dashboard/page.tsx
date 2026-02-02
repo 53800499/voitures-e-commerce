@@ -1,37 +1,81 @@
+/* eslint-disable @next/next/no-html-link-for-pages */
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import Typography from "@/ui/designSystem/typography/typography";
 import { wording } from "@/utils/wording";
 import { FiPackage, FiFolder, FiShoppingBag, FiDollarSign } from "react-icons/fi";
 
 export default function DashboardPage() {
-  const stats = [
+  const [stats, setStats] = useState({
+    totalProducts: 0,
+    totalCategories: 0,
+    totalOrders: 0,
+    totalRevenue: 0,
+    isLoading: true,
+  });
+
+  useEffect(() => {
+    const loadStats = async () => {
+      try {
+        const response = await fetch("/api/dashboard/stats");
+        const data = await response.json();
+
+        if (data.success) {
+          setStats({
+            totalProducts: data.stats.totalProducts,
+            totalCategories: data.stats.totalCategories,
+            totalOrders: data.stats.totalOrders,
+            totalRevenue: data.stats.totalRevenue,
+            isLoading: false,
+          });
+        } else {
+          // Afficher un message d'erreur plus clair à l'utilisateur
+          const errorMessage = data.error || "Erreur lors du chargement";
+          console.error("Erreur lors du chargement des statistiques:", errorMessage);
+          
+          // Si c'est une erreur de configuration Firebase Admin, afficher un message utile
+          if (errorMessage.includes("Firebase Admin SDK") || errorMessage.includes("credentials")) {
+            console.warn("⚠️ Firebase Admin SDK n'est pas configuré. Certaines fonctionnalités peuvent être limitées.");
+          }
+          
+          setStats((prev) => ({ ...prev, isLoading: false }));
+        }
+      } catch (error) {
+        console.error("Erreur lors du chargement des statistiques:", error);
+        setStats((prev) => ({ ...prev, isLoading: false }));
+      }
+    };
+
+    loadStats();
+  }, []);
+
+  const statsData = [
     {
       label: wording.dashboard.stats.totalProducts,
-      value: "0",
+      value: stats.isLoading ? "..." : stats.totalProducts.toString(),
       icon: FiPackage,
       color: "text-blue-600",
       bgColor: "bg-blue-50",
     },
     {
       label: wording.dashboard.stats.totalCategories,
-      value: "0",
+      value: stats.isLoading ? "..." : stats.totalCategories.toString(),
       icon: FiFolder,
       color: "text-green-600",
       bgColor: "bg-green-50",
     },
     {
       label: wording.dashboard.stats.totalOrders,
-      value: "0",
+      value: stats.isLoading ? "..." : stats.totalOrders.toString(),
       icon: FiShoppingBag,
       color: "text-purple-600",
       bgColor: "bg-purple-50",
     },
     {
       label: wording.dashboard.stats.totalRevenue,
-      value: "0 €",
+      value: stats.isLoading ? "..." : `${stats.totalRevenue.toLocaleString("fr-FR")} €`,
       icon: FiDollarSign,
       color: "text-orange-600",
       bgColor: "bg-orange-50",
@@ -52,8 +96,8 @@ export default function DashboardPage() {
         </div>
 
         {/* Statistiques */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {stats.map((stat, index) => {
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          {statsData.map((stat, index) => {
             const Icon = stat.icon;
             return (
               <div

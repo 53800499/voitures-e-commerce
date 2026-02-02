@@ -2,7 +2,7 @@
 
 import { db } from "@/config/firebase-config";
 import { collection, doc, setDoc, getDocs, query, where, updateDoc, Timestamp } from "firebase/firestore";
-import { emailService } from "@/services/email/EmailService";
+import { emailService } from "../email/SendgridEmailService";
 
 const STOCK_NOTIFICATIONS_COLLECTION = "stockNotifications";
 
