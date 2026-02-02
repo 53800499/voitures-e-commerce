@@ -95,6 +95,7 @@ export default function Home() {
             <SlideUp delay={0.2}>
               <Typography
                 variant="h1"
+                theme="primary"
                 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight px-2">
                 {wording.home.hero.title}
               </Typography>
