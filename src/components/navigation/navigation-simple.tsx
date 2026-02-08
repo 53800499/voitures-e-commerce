@@ -30,6 +30,7 @@ function NavigationLink({ href, children, className }: NavigationLinkProps) {
   return (
     <Link
       href={href}
+      prefetch={isActive ? false : undefined}
       className={clsx(
         className,
         isActive ? "text-primary font-medium" : "text-gray-900",
@@ -42,26 +43,35 @@ function NavigationLink({ href, children, className }: NavigationLinkProps) {
 
 export default function NavigationSimple() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const [isAdvancedSearchOpen, setIsAdvancedSearchOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [userIsAdmin, setUserIsAdmin] = useState(false);
   const [checkingAdmin, setCheckingAdmin] = useState(true);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const adminCheckRef = useRef<string | null>(null);
   const { getCartItemsCount } = useCart();
   const { authUser } = useAuth();
   const cartItemsCount = getCartItemsCount();
 
-  // Vérifier le statut admin
+  // Vérifier le statut admin (mémorisé pour éviter les vérifications répétées)
   useEffect(() => {
+    const userId = authUser?.uid || null;
+    
+    // Si l'utilisateur n'a pas changé, ne pas re-vérifier
+    if (adminCheckRef.current === userId) {
+      return;
+    }
+
     const checkAdminStatus = async () => {
       if (authUser) {
         const admin = await isAdmin(authUser);
         setUserIsAdmin(admin);
         setCheckingAdmin(false);
+        adminCheckRef.current = userId;
       } else {
         setCheckingAdmin(false);
         setUserIsAdmin(false);
+        adminCheckRef.current = null;
       }
     };
     checkAdminStatus();
@@ -87,26 +97,21 @@ export default function NavigationSimple() {
     };
   }, [isUserMenuOpen]);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      setIsAdvancedSearchOpen(true);
-    }
-  };
-
   const handleSearchClick = () => {
     setIsAdvancedSearchOpen(true);
   };
 
   return (
     <>
-      <nav className="bg-white shadow sticky top-0 z-50">
+      <nav className="bg-transparent lg:bg-white shadow sticky top-0 z-50">
+        {" "}
         <Container>
           {/* Mobile-First: Header compact sur mobile */}
           <div className="flex items-center justify-between py-2 px-4 lg:py-3 lg:px-6">
             {/* Logo - Plus petit sur mobile */}
             <Link
               href="/"
+              prefetch={undefined}
               className="flex items-center gap-1.5 lg:gap-2 transition-all duration-300">
               <div className="w-7 h-7 lg:w-9 lg:h-9 bg-primary flex items-center justify-center text-white font-bold text-xs lg:text-sm">
                 AL
@@ -130,6 +135,7 @@ export default function NavigationSimple() {
               {/* Cart - Toujours visible */}
               <Link
                 href="/cart"
+                prefetch={undefined}
                 className="relative p-2 text-gray-600 hover:text-primary transition-colors"
                 aria-label={wording.navigation.cart}
                 title={wording.navigation.cart}>
@@ -169,6 +175,7 @@ export default function NavigationSimple() {
                       <div className="py-1">
                         <Link
                           href="/profile"
+                          prefetch={undefined}
                           className="block px-3 py-2 text-xs text-gray-700 hover:bg-gray-100"
                           onClick={() => setIsUserMenuOpen(false)}>
                           {wording.navigation.profile}
@@ -176,6 +183,7 @@ export default function NavigationSimple() {
                         {!checkingAdmin && userIsAdmin && (
                           <Link
                             href="/dashboard"
+                            prefetch={undefined}
                             className="block px-3 py-2 text-xs font-medium text-primary hover:bg-gray-100"
                             onClick={() => setIsUserMenuOpen(false)}>
                             {wording.navigation.adminDashboard}
@@ -187,6 +195,7 @@ export default function NavigationSimple() {
                 </div>
               : <Link
                   href="/login"
+                  prefetch={undefined}
                   className="p-2 text-gray-600 hover:text-primary transition-colors lg:hidden"
                   aria-label={wording.navigation.login}>
                   <FiUser size={18} />
@@ -226,6 +235,7 @@ export default function NavigationSimple() {
                       <div className="py-1">
                         <Link
                           href="/profile"
+                          prefetch={undefined}
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           onClick={() => setIsUserMenuOpen(false)}>
                           {wording.navigation.profile}
@@ -233,6 +243,7 @@ export default function NavigationSimple() {
                         {!checkingAdmin && userIsAdmin && (
                           <Link
                             href="/dashboard"
+                            prefetch={undefined}
                             className="block px-4 py-2 text-sm font-medium text-primary hover:bg-gray-100"
                             onClick={() => setIsUserMenuOpen(false)}>
                             {wording.navigation.adminDashboard}
@@ -244,6 +255,7 @@ export default function NavigationSimple() {
                 </div>
               : <Link
                   href="/login"
+                  prefetch={undefined}
                   className="hidden lg:flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-primary transition-colors">
                   <FiUser size={20} />
                   <span className="text-sm font-medium">
@@ -308,7 +320,6 @@ export default function NavigationSimple() {
             </form> */}
           </div>
         </Container>
-
         {/* Mobile Menu - Slide in depuis le haut */}
         <div
           className={clsx(
@@ -318,30 +329,35 @@ export default function NavigationSimple() {
           <div className="px-4 py-3 space-y-1">
             <Link
               href="/"
+              prefetch={undefined}
               className="block py-2.5 px-4 text-sm font-medium hover:bg-gray-50 transition-colors text-gray-900"
               onClick={() => setIsMobileMenuOpen(false)}>
               {wording.navigation.home}
             </Link>
             <Link
               href="/shop"
+              prefetch={undefined}
               className="block py-2.5 px-4 text-sm font-medium hover:bg-gray-50 transition-colors text-gray-900"
               onClick={() => setIsMobileMenuOpen(false)}>
               {wording.navigation.shop}
             </Link>
             <Link
               href="/track-order"
+              prefetch={undefined}
               className="block py-2.5 px-4 text-sm font-medium hover:bg-gray-50 transition-colors text-gray-900"
               onClick={() => setIsMobileMenuOpen(false)}>
               {wording.navigation.trackOrder}
             </Link>
             <Link
               href="/about"
+              prefetch={undefined}
               className="block py-2.5 px-4 text-sm font-medium hover:bg-gray-50 transition-colors text-gray-900"
               onClick={() => setIsMobileMenuOpen(false)}>
               {wording.navigation.about}
             </Link>
             <Link
               href="/contact"
+              prefetch={undefined}
               className="block py-2.5 px-4 text-sm font-medium hover:bg-gray-50 transition-colors text-gray-900"
               onClick={() => setIsMobileMenuOpen(false)}>
               {wording.navigation.contact}
@@ -351,6 +367,7 @@ export default function NavigationSimple() {
                 <div className="border-t border-gray-200 my-2"></div>
                 <Link
                   href="/profile"
+                  prefetch={undefined}
                   className="block py-2.5 px-4 text-sm font-medium hover:bg-gray-50 transition-colors text-gray-900"
                   onClick={() => setIsMobileMenuOpen(false)}>
                   {wording.navigation.profile}
@@ -358,6 +375,7 @@ export default function NavigationSimple() {
                 {!checkingAdmin && userIsAdmin && (
                   <Link
                     href="/dashboard"
+                    prefetch={undefined}
                     className="block py-2.5 px-4 text-sm font-medium text-primary hover:bg-gray-50 transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}>
                     {wording.navigation.adminDashboard}
@@ -370,6 +388,7 @@ export default function NavigationSimple() {
                 <div className="border-t border-gray-200 my-2"></div>
                 <Link
                   href="/login"
+                  prefetch={undefined}
                   className="block py-2.5 px-4 text-sm font-medium hover:bg-gray-50 transition-colors text-gray-900"
                   onClick={() => setIsMobileMenuOpen(false)}>
                   {wording.navigation.login}
@@ -385,7 +404,6 @@ export default function NavigationSimple() {
         isOpen={isAdvancedSearchOpen}
         onClose={() => {
           setIsAdvancedSearchOpen(false);
-          setSearchQuery("");
         }}
       />
     </>

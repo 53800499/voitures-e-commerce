@@ -7,6 +7,7 @@ import FooterSimple from "../navigation/footer-simple";
 import { CartProvider } from "@/context/cartContext";
 import AuthUserProvider from "@/context/AuthUserContext";
 import { NotificationProvider } from "@/components/notifications/NotificationProvider";
+import PageTransition from "./PageTransition";
 
 interface Props {
   children: React.ReactNode;
@@ -21,7 +22,9 @@ export default function LayoutSimple({ children }: Props) {
       <CartProvider>
         <NotificationProvider>
           {!isDashboardPage && <NavigationSimple />}
-          {children}  
+          <PageTransition>
+            {children}
+          </PageTransition>
           {!isDashboardPage && <FooterSimple />}
         </NotificationProvider>
       </CartProvider>

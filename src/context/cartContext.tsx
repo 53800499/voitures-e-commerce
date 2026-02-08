@@ -77,12 +77,14 @@ export function CartProvider({ children }: Context) {
         };
         // Mettre à jour le dernier élément ajouté
         setLastAddedItem({ ...updatedCart[existingProductIndex] });
-        // Afficher notification
+        // Afficher notification de manière asynchrone pour éviter l'erreur React
         if (notificationCallback) {
-          notificationCallback(
-            `Quantité de "${product.nom}" mise à jour (${newQuantity})`,
-            "success"
-          );
+          setTimeout(() => {
+            notificationCallback(
+              `Quantité de "${product.nom}" mise à jour (${newQuantity})`,
+              "success"
+            );
+          }, 0);
         }
         return updatedCart;
       }
@@ -90,12 +92,14 @@ export function CartProvider({ children }: Context) {
       // Sinon, ajouter le nouveau produit avec son cartItemId unique
       const newProduct = { ...product, cartItemId };
       setLastAddedItem(newProduct);
-      // Afficher notification
+      // Afficher notification de manière asynchrone pour éviter l'erreur React
       if (notificationCallback) {
-        notificationCallback(
-          `"${product.nom}" a été ajouté au panier`,
-          "success"
-        );
+        setTimeout(() => {
+          notificationCallback(
+            `"${product.nom}" a été ajouté au panier`,
+            "success"
+          );
+        }, 0);
       }
       return [...prevCart, newProduct];
     });
@@ -105,13 +109,14 @@ export function CartProvider({ children }: Context) {
   const updateCartItem = (cartItemId: string, quantity: number) => {
     setCart((prevCart) => {
       const product = prevCart.find((p) => p.cartItemId === cartItemId);
-      if (product) {
-        if (notificationCallback) {
+      if (product && notificationCallback) {
+        // Afficher notification de manière asynchrone pour éviter l'erreur React
+        setTimeout(() => {
           notificationCallback(
             `Quantité de "${product.nom}" mise à jour (${quantity})`,
             "success"
           );
-        }
+        }, 0);
       }
       return prevCart.map((product) =>
         product.cartItemId === cartItemId ? { ...product, quantity } : product
@@ -124,10 +129,13 @@ export function CartProvider({ children }: Context) {
     setCart((prevCart) => {
       const product = prevCart.find((p) => p.cartItemId === cartItemId);
       if (product && notificationCallback) {
-        notificationCallback(
-          `"${product.nom}" a été retiré du panier`,
-          "info"
-        );
+        // Afficher notification de manière asynchrone pour éviter l'erreur React
+        setTimeout(() => {
+          notificationCallback(
+            `"${product.nom}" a été retiré du panier`,
+            "info"
+          );
+        }, 0);
       }
       return prevCart.filter((product) => product.cartItemId !== cartItemId);
     });

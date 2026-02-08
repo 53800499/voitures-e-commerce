@@ -122,7 +122,7 @@ export default function CheckoutPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Prénom *
+                      Prénom <span className="text-danger">*</span>
                     </label>
                     <input
                       type="text"
@@ -136,7 +136,7 @@ export default function CheckoutPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Nom *
+                      Nom <span className="text-danger">*</span>
                     </label>
                     <input
                       type="text"
@@ -152,7 +152,7 @@ export default function CheckoutPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Email *
+                    Email <span className="text-danger">*</span>
                   </label>
                   <input
                     type="email"
@@ -181,7 +181,7 @@ export default function CheckoutPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Adresse *
+                    Adresse <span className="text-danger">*</span>
                   </label>
                   <input
                     type="text"
@@ -197,7 +197,7 @@ export default function CheckoutPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Ville *
+                      Ville <span className="text-danger">*</span>
                     </label>
                     <input
                       type="text"
@@ -211,7 +211,7 @@ export default function CheckoutPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Code postal *
+                      Code postal <span className="text-danger">*</span>
                     </label>
                     <input
                       type="text"
@@ -234,35 +234,38 @@ export default function CheckoutPage() {
                     value={formData.country}
                     onChange={handleInputChange}
                     title="Sélectionner le pays"
-                    className="w-full p-3 border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary"
-                  >
+                    className="w-full p-3 border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary">
                     <option value="France">France</option>
                     <option value="Belgique">Belgique</option>
                     <option value="Suisse">Suisse</option>
                     <option value="Luxembourg">Luxembourg</option>
                   </select>
                 </div>
-
               </form>
             </div>
 
             {/* Résumé des produits */}
             <div className="bg-white shadow-md p-6">
-              <Typography variant="h4" theme="black" weight="bold" className="mb-6">
+              <Typography
+                variant="h4"
+                theme="black"
+                weight="bold"
+                className="mb-6">
                 Récapitulatif de la commande
               </Typography>
               <div className="space-y-4">
                 {cart.map((item) => {
-                  const itemPrice = item.promotion
-                    ? Number(item.promotion)
-                    : item.prix;
+                  const itemPrice =
+                    item.promotion ? Number(item.promotion) : item.prix;
                   const itemTotal = itemPrice * Number(item.quantity);
 
                   return (
                     <div
-                      key={item.cartItemId || `${item.id}-${item.selectedColor}-${item.selectedSize}`}
-                      className="flex gap-4 pb-4 border-b border-gray-200 last:border-0"
-                    >
+                      key={
+                        item.cartItemId ||
+                        `${item.id}-${item.selectedColor}-${item.selectedSize}`
+                      }
+                      className="flex gap-4 pb-4 border-b border-gray-200 last:border-0">
                       <div className="relative w-20 h-20 overflow-hidden bg-gray-100 shrink-0">
                         <Image
                           src={item.src || "/assets/images.jpg"}
@@ -274,7 +277,10 @@ export default function CheckoutPage() {
                         />
                       </div>
                       <div className="flex-1">
-                        <Typography variant="body-base" theme="black" weight="bold">
+                        <Typography
+                          variant="body-base"
+                          theme="black"
+                          weight="bold">
                           {item.nom}
                         </Typography>
                         {item.selectedColor && (
@@ -287,7 +293,11 @@ export default function CheckoutPage() {
                             Taille: {item.selectedSize}
                           </Typography>
                         )}
-                        <Typography variant="body-base" theme="primary" weight="bold" className="mt-1">
+                        <Typography
+                          variant="body-base"
+                          theme="primary"
+                          weight="bold"
+                          className="mt-1">
                           {formatPrice(itemTotal)}
                         </Typography>
                       </div>
@@ -306,7 +316,11 @@ export default function CheckoutPage() {
           {/* Résumé de commande */}
           <div className="lg:col-span-1">
             <div className="bg-white shadow-md p-6 sticky top-4">
-              <Typography variant="h4" theme="black" weight="bold" className="mb-6">
+              <Typography
+                variant="h4"
+                theme="black"
+                weight="bold"
+                className="mb-6">
                 Résumé
               </Typography>
 
@@ -347,8 +361,7 @@ export default function CheckoutPage() {
                   isLoading={isLoading}
                   className="mb-4"
                   icon={{ icon: FiLock }}
-                  iconPosition="left"
-                >
+                  iconPosition="left">
                   Payer maintenant
                 </Button>
               </form>

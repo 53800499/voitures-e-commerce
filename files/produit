@@ -1,0 +1,60 @@
+const listeProduits = [
+  {
+    id: "1",
+    nom: "AIXAM 500 4 places",
+    alt: "AIXAM 500 4 places",
+    src: "/assets/images.jpg",
+    prix: 1500,
+    promotion: null,
+    categorie: "Aixam",
+    dateAjout: new Date().toISOString(),
+    description:
+      "Voiture sans permis Aixam 500 avec 4 places, idéale pour la famille.",
+    description1:
+      "Robuste, élégante et ultra-sécurisée, l'Aixam 500 vous offre une expérience de conduite exceptionnelle.",
+    quantity: 1,
+    quantiteStock: 5,
+    prixPromo: null,
+    images: [
+      { id: 1, src: "/assets/images.jpg", alt: "AIXAM 500 vue avant" },
+      { id: 2, src: "/assets/images.jpg", alt: "AIXAM 500 vue côté" }
+    ],
+    colors: [
+      { id: 1, name: "Bleu", code: "#1E40AF" },
+      { id: 2, name: "Rouge", code: "#DC2626" },
+      { id: 3, name: "Blanc", code: "#FFFFFF" }
+    ],
+    sizes: ["Standard"],
+    size: "Standard"
+  },
+  {
+    id: "",
+    nom: "AIXAM 500 4 places",
+    alt: "AIXAM 500 4 places",
+    src: "/assets/images.jpg",
+    prix: 1500,
+    promotion: null,
+    categorie: "Aixam",
+    dateAjout: new Date().toISOString(),
+    description:
+      "Voiture sans permis Aixam 500 avec 4 places, idéale pour la famille.",
+    description1:
+      "Robuste, élégante et ultra-sécurisée, l'Aixam 500 vous offre une expérience de conduite exceptionnelle.",
+    quantity: 1,
+    quantiteStock: 5,
+    prixPromo: null,
+    images: [
+      { id: 1, src: "/assets/images.jpg", alt: "AIXAM 500 vue avant" },
+      { id: 2, src: "/assets/images.jpg", alt: "AIXAM 500 vue côté" },
+      { id: 1, src: "/assets/images.jpg", alt: "AIXAM 500 vue avant" },
+      { id: 2, src: "/assets/images.jpg", alt: "AIXAM 500 vue côté" },
+    ],
+    colors: [
+      { id: 1, name: "Bleu", code: "#1E40AF" },
+      { id: 2, name: "Rouge", code: "#DC2626" },
+      { id: 3, name: "Blanc", code: "#FFFFFF" }
+    ],
+    sizes: ["Standard"],
+    size: "Standard"
+  }
+];

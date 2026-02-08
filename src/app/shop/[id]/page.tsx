@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Container from "@/components/container/container";
-import { mockProducts } from "@/data/mockProducts";
+import { useProductById } from "@/hooks/useProductById";
 import { useCart } from "@/context/cartContext";
 import Typography from "@/ui/designSystem/typography/typography";
 import Button from "@/ui/designSystem/button/button";
@@ -29,7 +29,9 @@ import ScaleIn from "@/components/animations/ScaleIn";
 
 export default function ProductDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const productId = params?.id as string;
+  const { product, isLoading, error } = useProductById(productId);
   const { addToCart, lastAddedItem } = useCart();
   
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -40,18 +42,31 @@ export default function ProductDetailPage() {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [showStickyCart, setShowStickyCart] = useState(false);
 
-  // Trouver le produit
-  const product = mockProducts.find((p) => p.id === productId);
-
-  if (!product) {
+  // Affichage du chargement
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 py-12">
         <Container>
           <div className="text-center py-20">
             <Typography variant="h2" theme="black" weight="bold" className="mb-4">
-              Produit non trouvé
+              Chargement...
             </Typography>
-            <Link href="/shop">
+          </div>
+        </Container>
+      </div>
+    );
+  }
+
+  // Affichage de l'erreur ou produit non trouvé
+  if (error || !product) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-12">
+        <Container>
+          <div className="text-center py-20">
+            <Typography variant="h2" theme="black" weight="bold" className="mb-4">
+              {error || "Produit non trouvé"}
+            </Typography>
+              <Link href="/shop" prefetch={undefined}>
               <Button variant="accent" size="large">
                 Retour à la boutique
               </Button>
@@ -111,6 +126,41 @@ export default function ProductDetailPage() {
     }, 3000);
   };
 
+  const handleBuyNow = () => {
+    // Vérifier que la couleur et la taille sont sélectionnées
+    const finalColor = selectedColor || product.colors[0]?.name;
+    const finalSize = selectedSize || product.sizes[0];
+
+    if (!finalColor && product.colors.length > 0) {
+      alert("Veuillez sélectionner une couleur");
+      return;
+    }
+
+    if (!finalSize && product.sizes.length > 0) {
+      alert("Veuillez sélectionner une taille");
+      return;
+    }
+
+    // Ajouter au panier
+    addToCart({
+      id: product.id,
+      src: product.src || "/assets/images.jpg",
+      alt: product.alt,
+      nom: product.nom,
+      prix: product.prix,
+      promotion: product.promotion,
+      quantity: quantity,
+      selectedColor: finalColor,
+      selectedSize: finalSize,
+      description: product.description,
+    });
+
+    // Rediriger vers checkout
+    setTimeout(() => {
+      router.push("/checkout");
+    }, 100);
+  };
+
   const allImages = product.images.length > 0 
     ? product.images.map(img => ({ ...img, src: img.src || "/assets/images.jpg" }))
     : [{ id: 1, src: product.src || "/assets/images.jpg", alt: product.alt }];
@@ -159,7 +209,8 @@ export default function ProductDetailPage() {
                     alt={lastAddedItem.alt || lastAddedItem.nom}
                     width={80}
                     height={80}
-                    quality={100}
+                    quality={75}
+                    loading="lazy"
                     className="object-cover w-full h-full"
                   />
                 </div>
@@ -205,7 +256,7 @@ export default function ProductDetailPage() {
 
               {/* Actions */}
               <div className="flex items-center gap-3">
-                <Link href="/cart">
+                <Link href="/cart" prefetch={undefined}>
                   <Button variant="accent" size="medium">
                     Voir le panier
                   </Button>
@@ -225,14 +276,14 @@ export default function ProductDetailPage() {
 
       <Container>
         {/* Breadcrumb */}
-        <SlideUp>
+        <SlideUp delay={0}>
           <nav className="mb-6">
             <div className="flex items-center gap-2 text-sm text-gray-600">
-              <Link href="/" className="hover:text-primary transition-colors">
+              <Link href="/" prefetch={undefined} className="hover:text-primary transition-colors">
                 Accueil
               </Link>
               <span>/</span>
-              <Link href="/shop" className="hover:text-primary transition-colors">
+              <Link href="/shop" prefetch={undefined} className="hover:text-primary transition-colors">
                 Boutique
               </Link>
               <span>/</span>
@@ -243,7 +294,7 @@ export default function ProductDetailPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 mb-12 md:mb-16">
           {/* Galerie d'images */}
-          <SlideUp delay={0.2}>
+          <SlideUp delay={0.1}>
             <div className="space-y-4">
             {/* Image principale */}
             <div className="relative aspect-square bg-white shadow-lg overflow-hidden group">
@@ -252,7 +303,7 @@ export default function ProductDetailPage() {
                 alt={allImages[selectedImageIndex].alt}
                 width={800}
                 height={800}
-                quality={100}
+                quality={80}
                 className="object-cover w-full h-full"
                 priority
               />
@@ -316,7 +367,8 @@ export default function ProductDetailPage() {
                       alt={image.alt}
                       width={200}
                       height={200}
-                      quality={100}
+                      quality={75}
+                      loading="lazy"
                       className="object-cover w-full h-full"
                     />
                   </button>
@@ -327,7 +379,7 @@ export default function ProductDetailPage() {
           </SlideUp>
 
           {/* Informations produit */}
-          <SlideUp delay={0.3}>
+          <SlideUp delay={0.15}>
             <div className="space-y-6">
               {/* Catégorie et nom */}
               <div>
@@ -365,7 +417,7 @@ export default function ProductDetailPage() {
               </div>
 
               {/* Prix */}
-              <FadeIn delay={0.4}>
+              <FadeIn delay={0.2}>
                 <div className="flex items-baseline gap-4">
                   {originalPrice && (
                     <Typography
@@ -383,7 +435,7 @@ export default function ProductDetailPage() {
               </FadeIn>
 
               {/* Description */}
-              <FadeIn delay={0.5}>
+              <FadeIn delay={0.25}>
                 <div className="space-y-2">
                   <Typography variant="h5" theme="black" weight="bold" className="text-lg md:text-xl">
                     Description
@@ -407,14 +459,14 @@ export default function ProductDetailPage() {
 
               {/* Couleurs */}
               {product.colors && product.colors.length > 0 && (
-                <FadeIn delay={0.6}>
+                <FadeIn delay={0.3}>
                   <div className="space-y-3">
                     <Typography variant="h5" theme="black" weight="bold" className="text-lg md:text-xl">
                       Couleur
                     </Typography>
                     <div className="flex gap-3">
                       {product.colors.map((color, index) => (
-                        <ScaleIn key={color.id} delay={0.1 * index}>
+                        <ScaleIn key={color.id} delay={0.05 * index}>
                           <button
                             onClick={() => setSelectedColor(color.name)}
                             className={`w-10 h-10 md:w-12 md:h-12 border-2 transition-all rounded ${
@@ -439,14 +491,14 @@ export default function ProductDetailPage() {
 
               {/* Taille */}
               {product.sizes && product.sizes.length > 0 && (
-                <FadeIn delay={0.7}>
+                <FadeIn delay={0.35}>
                   <div className="space-y-3">
                     <Typography variant="h5" theme="black" weight="bold" className="text-lg md:text-xl">
                       Taille
                     </Typography>
                     <div className="flex gap-3 flex-wrap">
                       {product.sizes.map((size, index) => (
-                        <ScaleIn key={size} delay={0.1 * index}>
+                        <ScaleIn key={size} delay={0.05 * index}>
                           <button
                             onClick={() => setSelectedSize(size)}
                             className={`px-4 md:px-6 py-2 md:py-3 border-2 transition-all rounded ${
@@ -466,7 +518,7 @@ export default function ProductDetailPage() {
               )}
 
               {/* Quantité */}
-              <FadeIn delay={0.8}>
+              <FadeIn delay={0.4}>
                 <div className="space-y-3">
                   <Typography variant="h5" theme="black" weight="bold" className="text-lg md:text-xl">
                     Quantité
@@ -495,7 +547,7 @@ export default function ProductDetailPage() {
 
               {/* Stock */}
               {product.quantiteStock !== undefined && (
-                <FadeIn delay={0.9}>
+                <FadeIn delay={0.45}>
                   <div className="flex items-center gap-2">
                     {product.quantiteStock > 0 ?
                       <>
@@ -521,8 +573,8 @@ export default function ProductDetailPage() {
               )}
 
               {/* Boutons d'action */}
-              <FadeIn delay={1.0}>
-                <div className="flex gap-4 pt-4">
+              <FadeIn delay={0.5}>
+                <div className="flex flex-col sm:flex-row gap-4 pt-4">
                   <Button
                     variant="accent"
                     size="large"
@@ -532,6 +584,14 @@ export default function ProductDetailPage() {
                     iconPosition="left"
                     disabled={product.quantiteStock === 0}>
                     Ajouter au panier
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="large"
+                    fullwidth
+                    action={handleBuyNow}
+                    disabled={product.quantiteStock === 0}>
+                    Acheter maintenant
                   </Button>
                 </div>
               </FadeIn>
@@ -591,13 +651,13 @@ export default function ProductDetailPage() {
         </div>
 
         {/* Section détails supplémentaires */}
-        <SlideUp delay={0.4}>
+        <SlideUp delay={0.2}>
           <div className="mt-12 md:mt-16 bg-white shadow-md p-6 md:p-8 rounded-xl">
             <Typography variant="h2" theme="black" weight="bold" className="mb-4 md:mb-6 text-xl md:text-2xl">
               Détails du produit
             </Typography>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FadeIn delay={0.5}>
+              <FadeIn delay={0.25}>
                 <div>
                   <Typography
                     variant="h5"
@@ -629,7 +689,7 @@ export default function ProductDetailPage() {
                   </ul>
                 </div>
               </FadeIn>
-              <FadeIn delay={0.6}>
+              <FadeIn delay={0.3}>
                 <div>
                   <Typography
                     variant="h5"

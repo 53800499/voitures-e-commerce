@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, memo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { FiHeart, FiShoppingCart, FiEye } from "react-icons/fi";
@@ -18,7 +18,7 @@ interface ProductCardProps {
  * Composant ProductCard - Suit le principe de responsabilité unique (SRP)
  * Responsable uniquement de l'affichage d'une carte produit moderne
  */
-export default function ProductCard({
+function ProductCard({
   product,
   rating = 0,
 }: ProductCardProps) {
@@ -87,14 +87,15 @@ export default function ProductCard({
       </button>
 
       {/* Image du produit */}
-      <Link href={`/shop/${product.id}`} className="block relative">
+      <Link href={`/shop/${product.id}`} prefetch={undefined} className="block relative">
         <div className="relative h-64 w-full overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
           <Image
             src={product.src || "/assets/images.jpg"}
             alt={product.alt || product.nom}
             width={500}
             height={500}
-            quality={100}
+            quality={75}
+            loading="lazy"
             className="object-cover group-hover:scale-110 transition-transform duration-500 w-full h-full"
           />
           
@@ -141,7 +142,7 @@ export default function ProductCard({
         </Typography>
 
         {/* Nom du produit */}
-        <Link href={`/shop/${product.id}`}>
+        <Link href={`/shop/${product.id}`} prefetch={undefined}>
           <Typography
             variant="h5"
             theme="black"
@@ -196,4 +197,6 @@ export default function ProductCard({
     </div>
   );
 }
+
+export default memo(ProductCard);
 
